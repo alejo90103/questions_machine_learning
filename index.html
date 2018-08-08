@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lenguage Recognition</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <div class="container text-center" style="height:600px;">
+      <div class="d-inline-block text-center" style="margin:90px;">
+        <!-- <label>Escriba una oración en inglés o español</label> -->
+        <input id="word" type="text" class="d-block mx-auto" style="width: 300px">
+        <button id="suggest" class="btn btn-primary" type="button" style="margin:5px;">Check</button>
+        <div class="text-center" style="margin-top:50px;">
+          <label id="resp" style="font-weight: bold; font-size: larger;"></label>
+        </div>
+      </div>
+
+      <div class="row m-lg-1" style="padding-right:50px;padding-left:50px;">
+        <div class="col" >
+          <div id="card_0" class="card">
+            <div class="card-body">
+              <h4 class="card-title">Nombre</h4>
+              <h6 class="text-muted card-subtitle mb-2"></h6>
+              <p id="0" class="card-text" style="font-size:50px;">--%</p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div id="card_1" class="card">
+            <div class="card-body">
+              <h4 class="card-title">Edad</h4>
+              <h6 class="text-muted card-subtitle mb-2"></h6>
+              <p id="1" class="card-text" style="font-size:50px;">--%</p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div id="card_2" class="card">
+            <div class="card-body">
+              <h4 class="card-title">Dirección</h4>
+              <h6 class="text-muted card-subtitle mb-2"></h6>
+              <p id="2" class="card-text" style="font-size:50px;">--%</p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div id="card_3" class="card">
+            <div class="card-body">
+              <h4 class="card-title">Origen</h4>
+              <h6 class="text-muted card-subtitle mb-2"></h6>
+              <p id="3" class="card-text" style="font-size:50px;">--%</p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div id="card_4" class="card">
+            <div class="card-body">
+              <h4 class="card-title">Ánimo</h4>
+              <h6 class="text-muted card-subtitle mb-2"></h6>
+              <p id="4" class="card-text" style="font-size:50px;">--%</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/synaptic.min.js"></script>
+    <script src="assets/js/underscore.min.js"></script>
+    <script>
+      var controlVar = false;
+      var cardFocus = 0;
+
+      var questionsArrays = {
+        '0': {
+          'questions': ['como te nombras','como se nombre usted','cual es su nombre','cual es tu nombre','que nombre tiene usted','que nombre tienes tu','que nombre tenes','que nombre tienes','como tu te llamas','como usted se llama','como te llamas','como es que es tu nombre','como dijiste que te llamabas','Tienes nombre'],
+          'awnser': ['Alejandro', 'Mi nombre es Alejandro', 'Yo me llamo Alejandro']
+        },
+        '1': {
+          'questions': ['que edad tienes','cuantos años tienes','cual es tu edad','cual es su edad','cual edad vos tenes','cuantos años tenes vos','cuantos años tu vos','cuantos años usted tiene','cual es tu edad biologica','cuantos años cumplidos tienes','que edad tienes en años cumplidos'],
+          'awnser': ['27','tengo 27 años']
+        },
+        '2': {
+          'questions': ['donde te puedo encontrar','donde tu radicas','donde usted vives','donde tu vives','donde vives','en que lugar vives','donde vives actualmente','donde tu reside','donde usted reside','donde radicas','en que direccion vives'],
+          'awnser': ['Ave. 47 #5834', 'Municipio Playa']
+        },
+        '3': {
+          'questions': ['de donde eres','donde naciste','donde tu naciste','donde usted nacio','de donde vienes','de donde tu vienes','de donde usted viene','de donde tu eres','de donde usted es'],
+          'awnser': ['Cuba', 'Habana, Cuba']
+        },
+        '4': {
+          'questions': ['como estas vos','como usted esta','como tu estas','como estas','como usted se encuentra','como se encuentra','como te encuentras','como te sientes','como se siente','como usted se siente','como va la cosa'],
+          'awnser': ['OK','Super bien','Bien','Perfecto','Como nunca!!!']
+        }
+      };
+      // var questionsArrays = {
+      //   'name': {
+      //     'questions': ['te nombras','nombre usted','su nombre','tu nombre','nombre tiene usted','nombre tienes tu','nombre tenes','nombre tienes','te llamas','usted se llama','te llamas','te nombras','te llamabas','nombre'],
+      //     'awnser': ['Alejandro', 'Mi nombre es Alejandro', 'Yo me llamo Alejandro']
+      //   },
+      //   'age': {
+      //     'questions': ['edad tienes','años tienes','tu edad','su edad','edad vos tenes','años tenes vos','años tu vos','años usted tiene','edad biologica','años cumplidos','años cumplidos'],
+      //     'awnser': ['27','tengo 27 años']
+      //   },
+      //   'address': {
+      //     'questions': ['puedo encontrar','tu radicas','usted vives','tu vives','donde vives','lugar vives','vives actualmente','reside','usted reside','radicas','direccion vives'],
+      //     'awnser': ['Ave. 47 #5834', 'Municipio Playa']
+      //   },
+      //   'from': {
+      //     'questions': ['eres','naciste','tu naciste','usted nacio','donde vienes','tu vienes','usted viene','tu eres','usted es'],
+      //     'awnser': ['Cuba', 'Habana, Cuba']
+      //   },
+      //   'feel': {
+      //     'questions': ['estas vos','usted esta','tu estas','estas','se encuentra','encuentra','te encuentras','te sientes','se siente','usted se siente'],
+      //     'awnser': ['OK','Super bien','Bien','Perfecto','Como nunca!!!']
+      //   }
+      // };
+
+      var deepNetwork = {
+        _singleton: null,
+        getSingleton: function () {
+          if (!this._singleton) {
+            this._singleton = new synaptic.Architect.Perceptron(
+                  161, // Input layer with  neurons
+                  3, // First hidden layer with 3 neurons
+                  3, // Second hidden layer with 3 neurons
+                  5 // Output layer with 2 neurons
+            );
+          }
+          return this._singleton;
+        }
+      };
+
+      function convertToBinaryArray(question) {
+        var tempInBinary = "";
+        for (var i = 0; i < question.length; i++) {
+          tempInBinary += question[i].charCodeAt(0).toString(2);
+        }
+        // If it less than 7 digits long, add zeroes.
+        // while(tempInBinary.length < 161) {
+        while(tempInBinary.length < 161) {
+            tempInBinary = "0" + tempInBinary;
+        }
+        // Convert string to array
+        return tempInBinary.split("").map(function(i) {
+            return parseInt(i); }
+        );
+      }
+      function createTrainingData() {
+        var trainingData = [];
+        var output = [0,0,0,0,0];
+
+        var respIndex = 0;
+        for (var question in questionsArrays) {
+          var qtnName = questionsArrays[question];
+          var qtns = questionsArrays[question].questions;
+          if (respIndex == 0) {
+            output = [1,0,0,0,0];
+          }
+          else if (respIndex == 1) {
+            output = [0,1,0,0,0];
+          }
+          else if (respIndex == 2) {
+            output = [0,0,1,0,0];
+          }
+          else if (respIndex == 3) {
+            output = [0,0,0,1,0];
+          }
+          else {
+            output = [0,0,0,0,1];
+          }
+          for (var i = 0; i < qtns.length; i++) {
+            var input = convertToBinaryArray(qtns[i]); // Input layer
+            trainingData.push({
+                input: input,
+                output: output
+            });
+          }
+          respIndex++;
+        }
+        console.log(trainingData);
+        return trainingData;
+      }
+      function trainingNetwork(myDeepNetwork, trainingData) {
+        var myTrainer = new synaptic.Trainer(myDeepNetwork); // Create trainer
+        myTrainer.train(trainingData, {
+            rate: 0.01,
+            iterations: 10000,
+            shuffle: true
+        }); // Train with training data
+      }
+
+      function runNetwork(myDeepNetwork, question) {
+        var cWord = convertToBinaryArray(question);
+        return myDeepNetwork.activate(cWord);
+      }
+
+      function runSystem(question) {
+        if (controlVar) {
+          console.log("analisis");
+          return runNetwork(deepNetwork.getSingleton(), question);
+        }
+        else {
+          console.log("entrenamiento y analisis");
+          controlVar = true;
+          var trainingData = createTrainingData();
+          var deep = deepNetwork.getSingleton();
+          trainingNetwork(deep, trainingData);
+          return runNetwork(deepNetwork.getSingleton(), question);
+        }
+      }
+
+      $('#suggest').on('click', function (obj) {
+        var question = $('#word').val();
+        if (question!="") {
+          $('#card_'+cardFocus).removeClass('border-success');
+          question = clearSentence(question).toLowerCase();
+
+          var recommendations = runSystem(question);
+
+          var maxValue = 0;
+          for (var i=0; i<recommendations.length; i++) {
+            if (recommendations[i] > maxValue) {
+              maxValue = recommendations[i];
+              cardFocus = i;
+            }
+            $('#'+i).html((recommendations[i] * 100).toFixed(1) + "%");
+          }
+
+          if (maxValue < 0.70) {
+            $('#resp').html('SE MAS EXACTO');
+          }
+          else {
+            $('#card_'+cardFocus).addClass('border-success');
+            var awnser = questionsArrays[cardFocus.toString()].awnser;
+            var x = getRandomInt(0, (awnser.length-1));
+            $('#resp').html(awnser[x]);
+          }
+        }
+      });
+
+      function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      function clearSentence(sentence) {
+        sentence = sentence.replace("[^\\dA-Za-z]", "");
+        sentence = sentence.replace("[\\W]|_", "");
+        sentence = sentence.replace("[^a-zA-Z0-9]", "");
+        sentence = sentence.replace(/\./g,"");
+        sentence = sentence.replace(/\,/g,"");
+        sentence = sentence.replace(/\;/g,"");
+        sentence = sentence.replace(/\:/g,"");
+        sentence = sentence.replace(/\n/g," ");
+        sentence = sentence.replace("...","");
+        return sentence
+      }
+
+    </script>
+</body>
+
+</html>
